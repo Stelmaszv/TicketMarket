@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {{routs.title}} <br>
+    {{routs.description}}<br>
+    driver - {{routs.transport.driver.name}}<br>
+    company - {{routs.transport.company.name}} <br>
+    transport - {{routs.transport.name}} <br>
+    {% if routs.tickets < routs.transport.places %}
+        Places {{routs.tickets}}/{{routs.transport.places}}
+    {% endif %}
+    {% if routs.tickets == routs.transport.places %}
+        it's sold out
+    {% endif %}
+    {% for station in routs.stations.all %}
+        <li>
+            {{station.number}} {{station.station.name}}
+            - {{station.station.city}} - {{station.time}}
+            {% if station.last == False %}
+            - {{station.price}} euro
+            {% endif %}
+        </li>
+    {% endfor %}
+</body>
+</html>
