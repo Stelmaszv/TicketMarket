@@ -1,14 +1,10 @@
-from django.http import HttpResponse
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import render,get_object_or_404
 from .models import (route,driver,company,transport,station)
-from datetime import datetime
 from django.utils import timezone
 from .forms import (DriverUpdataForm,CompanyUpdataForm,StationUpdataForm,TransportUpdataForm)
 from django.views.generic.base import TemplateView
-from django.views.generic import (
-    UpdateView,
-)
-class AboutView(TemplateView):
+from django.views.generic import (UpdateView)
+class MainView(TemplateView):
     def get(self,request,*args,**kwargs):
         query=self.setSearch(request);
         context={'queryset':query,'request':request}
