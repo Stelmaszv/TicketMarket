@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Driver</h2>
+    <div> name {{context.name}}       </div>
+    <div> surname {{context.surname}} </div>
+    <a href="{% url 'driveredit' context.id %}">Edit</a>
+{% endblock %}

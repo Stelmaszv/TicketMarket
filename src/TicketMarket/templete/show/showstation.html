@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Station</h2>
+    <div> name {{context.name}}       </div>
+    <div> city {{context.city}} </div>
+    <a href="{% url 'stationedit' context.id %}">edit</a>
+{% endblock %}

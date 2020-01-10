@@ -15,10 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import (AboutView,show)
+from app.views import (AboutView,show,showDriver,showCompany,showTransport,showStation,editDriver,editCompany,editTransport,editStation)
 
 urlpatterns = [
     path('', AboutView.as_view()),
     path('show/<int:id>', show.as_view()),
+    path('show/driver/<int:id>/', showDriver.as_view() ,name = 'driver'),
+    path('show/driver/<int:id>/edit/', editDriver.as_view() ,name = 'driveredit'),
+    path('show/company/<int:id>/', showCompany.as_view(),name = 'company'),
+    path('show/company/<int:id>/edit/', editCompany.as_view() ,name = 'companyedit'),
+    path('show/transport/<int:id>/', showTransport.as_view() ,name='transport'),
+    path('show/transport/<int:id>/edit/', editTransport.as_view() ,name='transportedit'),
+    path('show/station/<int:id>/', showStation.as_view() ,name='station'),
+    path('show/station/<int:id>/edit/',editStation.as_view() ,name='stationedit'),
     path('admin/', admin.site.urls),
 ]

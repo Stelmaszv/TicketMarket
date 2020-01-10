@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Route</h2>
+    <div>{{context.title}}</div>
+    <div>{{context.description}}</div>
+    <div>driver - <a href="{% url 'driver' context.transport.driver.id %}">{{context.transport.driver.name}}</a></div>
+    <div>company - <a href="{% url 'company' context.transport.company.id %}">{{context.transport.company.name}}</a> </div>
+    <div>transport - <a href="{% url 'transport' context.transport.id %}">{{context.transport.name}}</a> </div>
+    {% if context.tickets < context.transport.places %}
+        <div>Places {{context.tickets}}/{{context.transport.places}}</div>
+    {% endif %}
+    {% if context.tickets == context.transport.places %}
+        <div>it's sold out</div>
+    {% endif %}
+    {% for station in context.stations.all %}
+        <li>
+            {{station.number}} <a href="{% url 'station' station.station.id %}">{{station.station.name}}</a>
+            - {{station.station.city}} - {{station.time}}
+            {% if station.last == False %}
+            - {{station.price}} euro
+            {% endif %}
+        </li>
+    {% endfor %}
+{% endblock %}
