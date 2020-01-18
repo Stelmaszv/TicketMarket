@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if form.errors %}
+        <div> wrong login or password </div>
+    {% endif %}
+    {% if next %}
+        <div> no acces</div>
+    {% endif %}
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <p> Username {{ form.username }}</p>
+        <p> Pasword {{ form.password }}</p>
+        <input type="submit" value="login">
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+{% endblock %}

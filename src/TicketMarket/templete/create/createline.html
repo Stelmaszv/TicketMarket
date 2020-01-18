@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+    {{ form.erros }}
+    <form action='.' method='POST'>
+        {% csrf_token %}
+        {{ form }}
+        <!--
+        Title {{ form.title }} <br>
+        Description <br> {{ form.description }} <br>
+        tickets {{ form.tickets }} <br>
+        Company
+        <select name="company" id="id_company">
+            <option value="" selected>---------</option>
+            {% for item in items.campanys %}
+                <option value="{{item.id}}">{{item.name}}</option>
+            {% endfor %}
+        </select><br>
+        Transport <select name="transport" id="id_transport">
+          <option value="" selected>---------</option>
+            {% for item in items.transports %}
+          <option value="{{item.id}}">{{item.name}}</option>
+            {% endfor %}
+        </select> <br>
+        Driver <select name="driver" id="id_driver">
+          <option value="" selected>---------</option>
+            {% for item in items.transports %}
+          <option value="{{item.id}}">{{item.name}}</option>
+            {% endfor %}
+        </select> <br>
+        -->
+        <input type='submit' value='Save' /><br>
+    </form>
+{% endblock %}

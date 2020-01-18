@@ -1,3 +1,10 @@
-<div>
-    nav
-</div>
+<navbar>
+    {% if user.is_authenticated %}
+        <div>login as {{ user.username }} </div>
+        <a href="{% url 'myprofil' %}">Your profil</a>
+        <a href="{% url 'mycompany:mycompany' %}">Your company</a>
+    {% else %}
+        <a href="{% url 'login' %}">login</a>
+        <a href="{% url 'register' %}">register</a>
+    {% endif %}
+</navbar>

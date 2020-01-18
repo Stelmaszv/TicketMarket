@@ -1,9 +1,13 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404,redirect
 from .models import (route,driver,company,transport,station)
 from django.utils import timezone
 from .forms import (DriverUpdataForm,CompanyUpdataForm,StationUpdataForm,TransportUpdataForm)
 from django.views.generic.base import TemplateView
 from django.views.generic import (UpdateView)
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate,login
+from companymenager.views import mycompany
+from core.baseview import (baseShowView)
 class MainView(TemplateView):
     def get(self,request,*args,**kwargs):
         query=self.setSearch(request);
@@ -52,30 +56,31 @@ class MainView(TemplateView):
             if len(request.GET['destenation']) and len(request.GET['start']):
                 return self.faindStart(request.GET['start'],request.GET['destenation'])
         return route.objects.all()
-class baseShowView(TemplateView):
-    def get(self,request,*args,**kwargs):
-        context={'context':self.get_object()}
-        return render(request,self.template,context)
-    def get_object(self):
-        id = self.kwargs.get('id')
-        obj = None
-        if id is not None:
-            obj = get_object_or_404(self.model, id=id)
-        return obj
 class BaseUpdateView(UpdateView):
     template_name = 'edit/editbase.html'
     def get_object(self):
         id_ = self.kwargs.get("id")
         return get_object_or_404(self.model, id=id_)
+    def get(self,request,*args, **kwargs):
+        context = {}
+        obj = self.get_object()
+        if obj is not None:
+            form = DriverUpdataForm(instance=obj)
+            context['form'] = form
+            context['items'] = mycompany().setData(request)
+        return render(request, self.template_name, context)
+class editTransport(BaseUpdateView):
+    template_name = 'create/createTransport.html'
+    form_class = TransportUpdataForm
+    model=transport
 class editDriver(BaseUpdateView):
+    template_name = 'create/createdriver.html'
     form_class = DriverUpdataForm
     model=driver
 class editCompany(BaseUpdateView):
+    template_name = 'create/companycreate.html'
     form_class = CompanyUpdataForm
     model=company
-class editTransport(BaseUpdateView):
-    form_class = TransportUpdataForm
-    model=transport
 class editStation(BaseUpdateView):
     form_class = StationUpdataForm
     model=station
@@ -94,5 +99,24 @@ class showTransport(baseShowView):
 class showStation(baseShowView):
     template = 'show/showstation.html'
     model = station
+class register(TemplateView):
+    template_name = 'registeration/register.html'
+    def post(self,request):
+        register = UserCreationForm()
+        if request.method=='POST':
+            register= UserCreationForm(request.POST)
+            if register.is_valid():
+                register.save()
+                username=register.cleaned_data['username']
+                passsword=register.cleaned_data['password1']
+                user=authenticate(username=username,passsword=passsword)
+                login(request,user)
+                return redirect('home')
+        data= {'form':register}
+        return render(request,self.template_name,data)
+class myprofil(TemplateView):
+    template_name = 'myprofil.html'
+
+
 
 

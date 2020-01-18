@@ -3,5 +3,7 @@
     <h2>Company</h2>
     <div> name {{context.name}}       </div>
     <div> city {{context.city}} </div>
-    <a href="{% url 'companyedit' context.id %}">Edit</a>
+    {% if context.user.username == user.username %}
+        <a href="{% url 'companyedit' context.id %}">Edit</a>
+    {% endif %}
 {% endblock %}

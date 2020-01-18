@@ -1,5 +1,6 @@
+from django.utils import timezone
 from django import forms
-from .models import (driver,company,transport,station)
+from .models import (driver,company,transport,station,route,station,routeStation)
 class DriverUpdataForm(forms.ModelForm):
     class Meta:
         model=driver
@@ -12,7 +13,8 @@ class CompanyUpdataForm(forms.ModelForm):
         model=company
         fields=[
             'name',
-            'city'
+            'city',
+            'user'
         ]
 class StationUpdataForm(forms.ModelForm):
     class Meta:
@@ -28,6 +30,36 @@ class TransportUpdataForm(forms.ModelForm):
             'name',
             'description',
             'places',
-            'driver',
             'company'
         ]
+class LineUpdataForm(forms.ModelForm):
+    class Meta:
+        model=route
+        fields=[
+            'title',
+            'description',
+            'tickets',
+            'company',
+            'transport',
+            'driver'
+        ]
+class LineForm(forms.ModelForm):
+    class Meta:
+        model = routeStation
+        fields = [
+            'number',
+            'price',
+            'time',
+            'station',
+            'last'
+        ]
+    def clean_time(self):
+        time = self.cleaned_data.get('time')
+        if time < timezone.now():
+            raise forms.ValidationError("You can't add past data")
+        return time
+    def clean_station(self):
+        station = self.cleaned_data.get('station')
+        if station is None:
+            raise forms.ValidationError("Please choose station")
+        return station

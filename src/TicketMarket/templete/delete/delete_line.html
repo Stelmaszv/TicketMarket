@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<form action='.' method='POST'>{% csrf_token %}
+    <h1>Do you want to delete the station ?</h1>
+    <b>number {{ object.number }}</b><br>
+    <b>name {{ object.station.name }}</b><br>
+    <b>city {{ object.station.city }}</b><br>
+    <input type='submit' value='Yes'>
+</form>
+{% endblock %}

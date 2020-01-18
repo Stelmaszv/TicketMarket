@@ -14,12 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from app.views import (MainView,show,showDriver,showCompany,showTransport,showStation,editDriver,editCompany,editTransport,editStation)
+from django.urls import path,include
+from app.views import (MainView,show,showDriver,showCompany,showTransport,showStation,editDriver,editCompany,editTransport,editStation,register,myprofil)
+from companymenager import urls
 
 urlpatterns = [
-    path('', MainView.as_view()),
-    path('show/<int:id>', show.as_view()),
+    path('', MainView.as_view(),name='home'),
+    path('show/<int:id>', show.as_view(), name='showitem' ),
     path('show/driver/<int:id>/', showDriver.as_view() ,name = 'driver'),
     path('show/driver/<int:id>/edit/', editDriver.as_view() ,name = 'driveredit'),
     path('show/company/<int:id>/', showCompany.as_view(),name = 'company'),
@@ -28,5 +29,9 @@ urlpatterns = [
     path('show/transport/<int:id>/edit/', editTransport.as_view() ,name='transportedit'),
     path('show/station/<int:id>/', showStation.as_view() ,name='station'),
     path('show/station/<int:id>/edit/',editStation.as_view() ,name='stationedit'),
+    path('myprofil/',myprofil.as_view() ,name='myprofil'),
+    path('mycompany/',include('companymenager.urls')),
+    path('register/',register.as_view() ,name='register'),
+    path('accounts/',include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
 ]

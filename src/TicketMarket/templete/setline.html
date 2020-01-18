@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>{{line.title}}</h2>
+    <div><a href="{% url 'mycompany:editline' line.id  %}">Edit Line</a></div>
+    <div><a href="{% url 'mycompany:addstationtoline' line.id  %}">Add Station line</a></div>
+    {% for station in stations %}
+        <li>
+            {{station.number}} <a href="{% url 'station' station.station.id %}">{{station.station.name}}</a>
+            - {{station.station.city}} - {{station.time}}
+            {% if station.last == False %}
+            - {{station.price}} euro
+            {% endif %}
+            <a href="{% url 'mycompany:deleteStation' line.id station.id %}">delete</a>
+            <a href="{% url 'mycompany:editStation' line.id station.id %}">edit</a>
+        </li>
+    {% endfor %}
+    Line active <b>{{line.active}}</b>
+{% endblock %}

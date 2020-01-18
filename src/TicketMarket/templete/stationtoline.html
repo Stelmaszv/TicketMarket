@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+ {{ form.errors }}
+ {{ form.time.errors }}
+ {{ form.station.errors }}
+    <form action='.' method='POST'>{% csrf_token %}
+        Number:  {{ form.number }}
+        Price: {{ form.price }}
+        Time: {{ form.time }}
+        Station: {{ form.station }}
+        <!--
+        Station: <select name="station" id="id_station">
+              <option value="" selected>---------</option>
+              {% for item in adddata %}
+                <option value="{{item.id}}">{{item.city}} - {{item.name}}</option>
+              {% endfor %}
+        </select>
+        -->
+        last: {{ form.last }}
+        <input type='submit' value='Save' />
+    </form>
+{% endblock %}

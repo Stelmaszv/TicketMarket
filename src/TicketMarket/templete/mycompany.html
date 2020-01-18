@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Your line</h2>
+    <li><a href="{% url 'mycompany:addline' %}">Add new line</a></li>
+    {% for item in items.line %}
+        <li><a href="{% url 'showitem' item.id  %}">{{item.title}} </a><a href="{% url 'mycompany:setline' item.id  %}">set</a> </li>
+    {% endfor %}
+    <h2> Your Campanys</h2>
+    <li><a href="{% url 'mycompany:addcampany' %}">Add new company</a></li>
+    {% for item in items.campanys %}
+        <li><a href="{% url 'company' item.id  %}">{{item.name}} </a> <a href="{% url 'companyedit' item.id  %}">edit</a></li>
+    {% endfor %}
+    <h2> Your Transports</h2>
+    <li><a href="{% url 'mycompany:addtransport' %}">Add new transport</a></li>
+    {% for item in items.transports %}
+        <li><a href="{% url 'transport' item.id  %}">{{item.name}} </a> <a href="{% url 'transportedit' item.id  %}">edit</a></li>
+    {% endfor %}
+    <h2> Your Drivers</h2>
+    <li><a href="{% url 'mycompany:adddriver' %}">Add new driver</a></li>
+    {% for item in items.drivers %}
+        <li><a href="{% url 'driver' item.id  %}">{{item.name}} </a> <a href="{% url 'driveredit' item.id  %}">edit</a></li>
+    {% endfor %}
+{% endblock %}
