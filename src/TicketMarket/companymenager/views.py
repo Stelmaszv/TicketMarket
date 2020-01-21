@@ -5,6 +5,7 @@ from django.views.generic import (CreateView,DeleteView)
 from app.models import (company,transport,driver,route,routeStation,station)
 from app.forms import (CompanyUpdataForm,TransportUpdataForm,DriverUpdataForm,LineUpdataForm,LineForm)
 from core.baseview import (baseShowView)
+from django.template import RequestContext
 class mycompany(TemplateView):
     template_name = 'mycompany.html'
     def get(self,request,*args,**kwargs):
@@ -122,8 +123,6 @@ class editStation(baseCreate):
         if self.form.is_valid():
             self.form.save()
             return redirect(self.success_url)
-        else:
-            print('dqd')
         return render(request, self.template_name, self.context)
     def get(self, request, id=None, *args, **kwargs):
         # GET method

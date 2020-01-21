@@ -27,6 +27,8 @@ class MainView(TemplateView):
                 if stationInItem.station.city == destenation:
                     destenationnumber=stationInItem.number
                 if startnumber is not None and destenationnumber is not None:
+                    item.start=startnumber;
+                    item.destenationnumber=destenationnumber
                     if startnumber < destenationnumber:
                         if Past and soldOut:
                             self.addItem(item)

@@ -2,6 +2,10 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
+
+class classintrnasport(models.Model):
+    name=models.CharField(max_length=150)
+    level=models.BigIntegerField()
 class company(models.Model):
     name=models.CharField(max_length=150)
     city=models.CharField(max_length=150)
@@ -32,6 +36,7 @@ class transport(models.Model):
     description = models.TextField()
     places = models.BigIntegerField(default=0)
     company = models.ForeignKey(company, on_delete=models.SET_NULL, null=True, blank=True)
+    classs = models.ManyToManyField(classintrnasport, blank=True)
     def get_absolute_url(self):
         return reverse("transport", kwargs={"id": self.id})
 class route(models.Model):
@@ -56,7 +61,6 @@ class route(models.Model):
                 error = error + 1
         else:
             error = error + 1
-        print(error)
         if error < 1:
             self.active=True;
         else:
@@ -73,6 +77,16 @@ class route(models.Model):
         if error < 1:
             return False
         return True
-
-
+class cart(models.Model):
+    name = models.CharField(max_length=250)
+    price = models.BigIntegerField(default=0)
+    quantity = models.BigIntegerField(default=0)
+    route = models.ForeignKey(route, on_delete=models.SET_NULL, null=True, blank=True)
+    buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+class shipping(models.Model):
+    name = models.CharField(max_length=250)
+    price = models.BigIntegerField(default=0)
+class payment(models.Model):
+    name = models.CharField(max_length=250)
+    price = models.BigIntegerField(default=0)
 

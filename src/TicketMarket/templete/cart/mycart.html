@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for item in list %}
+        <div>
+            <a href="{% url 'showitem' item.route.id %}">{{item.name}} </a>
+            {{item.quantity}} x {{item.price}} euro
+        </div>
+    {% endfor %}
+    <a href="{% url 'cart:orderproces' 0 %}">Dalej</a>
+{% endblock %}

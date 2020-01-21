@@ -1,8 +1,12 @@
 from django.contrib import admin
-from .models import (route,driver,company,station,routeStation,transport)
+from .models import (route,driver,company,station,routeStation,transport,classintrnasport,cart,shipping,payment)
 admin.site.register(route)
 admin.site.register(driver)
 admin.site.register(company)
 admin.site.register(station)
 admin.site.register(routeStation)
 admin.site.register(transport)
+admin.site.register(classintrnasport)
+admin.site.register(cart)
+admin.site.register(shipping)
+admin.site.register(payment)

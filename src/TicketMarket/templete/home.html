@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
     <form method="GET">
-        {% csrf_token %}
         Start <input type="text" name="start" value="{{ request.GET.start }}">
         Destenation <input type="text" name="destenation" value="{{ request.GET.destenation }}">
         <input type="submit" value="search">
     </form>
     {% for item in queryset %}
         {{ item.soldout }}
-            <li><a href="show/{{item.id}}">{{item.title}}</a></li>
+            <li>
+                <a href="show/{{item.id}}">{{item.title}}</a>
+                {% if item.start %}
+                <a href="{% url 'cart:addtocart' item.id item.start item.destenationnumber %}">Buy ticket</a>
+                {% endif %}
+            </li>
     {% endfor %}
     {% if queryset|length == 0 %}
         no routs faind

@@ -31,6 +31,7 @@ urlpatterns = [
     path('show/station/<int:id>/edit/',editStation.as_view() ,name='stationedit'),
     path('myprofil/',myprofil.as_view() ,name='myprofil'),
     path('mycompany/',include('companymenager.urls')),
+    path('cart/',include('cart.urls')),
     path('register/',register.as_view() ,name='register'),
     path('accounts/',include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),

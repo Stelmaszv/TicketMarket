@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Shoping</h2>
+    <form  method="GET">
+        {% for item in shipping %}
+            {{item.name}}<input type="radio" name="shipping" value="{{item.id}}"><br>
+        {% endfor %}
+        {% for item in payment %}
+            {{item.name}}<input type="radio" name="payment" value="{{item.id}}"><br>
+        {% endfor %}
+        <input type="submit">
+    </form>
+    <a href="{% url 'cart:orderproces' 1 %}">Dalej</a>
+{% endblock %}

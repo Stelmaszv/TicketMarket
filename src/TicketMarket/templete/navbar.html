@@ -1,9 +1,12 @@
 <navbar>
     {% if user.is_authenticated %}
         <div>login as {{ user.username }} </div>
+        <a href="{% url 'home' %}">Home</a>
         <a href="{% url 'myprofil' %}">Your profil</a>
         <a href="{% url 'mycompany:mycompany' %}">Your company</a>
+        <a href="{% url 'cart:mycart' %}">Your cart</a>
     {% else %}
+        <a href="{% url 'home' %}">Home</a>
         <a href="{% url 'login' %}">login</a>
         <a href="{% url 'register' %}">register</a>
     {% endif %}
