@@ -1,5 +1,4 @@
 from django.db import models
-from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -10,35 +9,25 @@ class company(models.Model):
     name=models.CharField(max_length=150)
     city=models.CharField(max_length=150)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    def get_absolute_url(self):
-        return reverse("company", kwargs={"id": self.id})
 class driver(models.Model):
     name=models.CharField(max_length=150)
     surname=models.CharField(max_length=150)
     company = models.ForeignKey(company, on_delete=models.SET_NULL, null=True, blank=True)
-    def get_absolute_url(self):
-        return reverse("driver", kwargs={"id": self.id})
 class station(models.Model):
     name = models.CharField(max_length=150)
     city = models.CharField(max_length=150)
-    def get_absolute_url(self):
-        return reverse("station", kwargs={"id": self.id})
 class routeStation(models.Model):
     number = models.BigIntegerField()
     price = models.DecimalField(max_digits=100, decimal_places=2,null=True, blank=True)
     time = models.DateTimeField()
     station = models.ForeignKey(station, on_delete=models.SET_NULL, null=True, blank=True)
     last= models.BooleanField(default=False)
-    def get_absolute_url(self):
-        return reverse("driver", kwargs={"id": self.id})
 class transport(models.Model):
     name = models.CharField(max_length=250)
     description = models.TextField()
     places = models.BigIntegerField(default=0)
     company = models.ForeignKey(company, on_delete=models.SET_NULL, null=True, blank=True)
     classs = models.ManyToManyField(classintrnasport, blank=True)
-    def get_absolute_url(self):
-        return reverse("transport", kwargs={"id": self.id})
 class route(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField()
@@ -83,10 +72,27 @@ class cart(models.Model):
     quantity = models.BigIntegerField(default=0)
     route = models.ForeignKey(route, on_delete=models.SET_NULL, null=True, blank=True)
     buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+class transportticket(models.Model):
+    name=models.CharField(max_length=100)
+    price = models.BigIntegerField(default=0)
+    stan = models.CharField(max_length=100)
+    route = models.ForeignKey(route, on_delete=models.SET_NULL, null=True, blank=True)
+    buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    company = models.ForeignKey(company, on_delete=models.SET_NULL, null=True, blank=True)
+    def setTicketInroud(self):
+        print('dqd')
 class shipping(models.Model):
     name = models.CharField(max_length=250)
     price = models.BigIntegerField(default=0)
 class payment(models.Model):
     name = models.CharField(max_length=250)
     price = models.BigIntegerField(default=0)
+class useraddress(models.Model):
+    bulding=models.BigIntegerField(default=0)
+    apartment=models.BigIntegerField(default=0)
+    postcode=models.CharField(max_length=10)
+    street=models.CharField(max_length=250)
+    city=models.CharField(max_length=250)
+    phon=models.CharField(max_length=15)
+    user=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 

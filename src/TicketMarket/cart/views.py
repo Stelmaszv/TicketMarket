@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect,HttpResponse,reverse
+from django.shortcuts import render, redirect,HttpResponse,reverse,get_object_or_404
 from django.views.generic.base import TemplateView
-from app.models import (route,cart,payment,shipping)
+from app.models import (route,cart,payment,shipping,useraddress,transportticket)
+from app.forms import (useraddresstUpdataForm)
 import datetime
 from django.utils import timezone
 
@@ -69,31 +70,61 @@ class mycart(TemplateView):
         }
         return render(request, self.template_name, context)
 class order(TemplateView):
+    form = useraddresstUpdataForm()
+    def get_object(self,request):
+        return get_object_or_404(useraddress, user=request.user.id)
     def get(self, request, step=None, *args, **kwargs):
         items=[shoping,addressed,summary,confirmation]
         return items[step].get(self,request)
+    def post(self,request,step=None, *args, **kwargs):
+        items = [shoping, addressed, summary, confirmation]
+        return items[step].post(self, request)
 class shoping(TemplateView):
     def get(self,request):
         if request.GET:
-            if request.GET['shipping'] and request.GET['payment']:
-                shippingGET=request.GET['shipping']
-                paymentGET=request.GET['payment']
-                return redirect('/cart/orderproces/1')
+            return redirect('/cart/orderproces/1?shipping='+request.GET['shipping']+'&&payment='+request.GET['payment'])
         context = {
             'shipping':shipping.objects.all(),
             'payment':payment.objects.all()
         }
         return render(request, 'order/shipping.html', context)
-class addressed:
+class addressed(TemplateView):
+    form = useraddresstUpdataForm()
     def get(self,request):
-        context = {}
+        context = {
+            'form':self.form
+        }
+        return render(request, 'order/addressed.html', context)
+    def post(self,request):
+        self.obj = self.get_object(request)
+        self.form = useraddresstUpdataForm(request.POST, instance=self.obj)
+        context = {
+            'form': self.form
+        }
+        if self.form.is_valid():
+            self.form .save()
+            return redirect('/cart/orderproces/2?shipping=' + request.GET['shipping'] + '&&payment=' + request.GET['payment'])
         return render(request, 'order/addressed.html', context)
 class summary:
     def get(self,request):
-        context = {}
+        paymentObj = payment.objects.get(id=request.GET['payment'])
+        shippingObj = shipping.objects.get(id=request.GET['shipping'])
+        cartObj = cart.objects.filter(buyer__username=request.user.username)
+        address= self.get_object(request)
+        context = {
+            'payment' :paymentObj,
+            'shipping':shippingObj,
+            'address' :address,
+            'cartObj' :cartObj
+        }
         return render(request, 'order/summary.html', context)
 class confirmation:
     def get(self,request):
+        cartObj = cart.objects.filter(buyer__username=request.user.username)
+        for cartelment in cartObj:
+            el=transportticket(name=cartelment.name, price=cartelment.price, stan='aceppt',route=cartelment.route,buyer=request.user,company=cartelment.route.company)
+            el.save()
+            cartelment.delete()
         context = {}
         return render(request, 'order/confirmation.html', context)
 

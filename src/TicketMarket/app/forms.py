@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django import forms
-from .models import (driver,company,transport,station,route,station,routeStation)
+from .models import (driver,company,transport,station,route,station,routeStation,useraddress)
 class DriverUpdataForm(forms.ModelForm):
     class Meta:
         model=driver
@@ -32,6 +32,18 @@ class TransportUpdataForm(forms.ModelForm):
             'places',
             'company'
         ]
+class useraddresstUpdataForm(forms.ModelForm):
+    class Meta:
+        model=useraddress
+        fields = [
+            'bulding',
+            'apartment',
+            'postcode',
+            'street',
+            'city',
+            'phon',
+        ]
+
 class LineUpdataForm(forms.ModelForm):
     class Meta:
         model=route

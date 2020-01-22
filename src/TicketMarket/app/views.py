@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from .models import (route,driver,company,transport,station)
+from .models import (route,driver,company,transport,station,transportticket)
 from django.utils import timezone
 from .forms import (DriverUpdataForm,CompanyUpdataForm,StationUpdataForm,TransportUpdataForm)
 from django.views.generic.base import TemplateView
@@ -11,6 +11,7 @@ from core.baseview import (baseShowView)
 class MainView(TemplateView):
     def get(self,request,*args,**kwargs):
         query=self.setSearch(request);
+        transportticket.setTicketInroud(transportticket)
         context={'queryset':query,'request':request}
         return render(request,"home.html",context)
     def faindStart(self,start,destenation):
@@ -43,8 +44,6 @@ class MainView(TemplateView):
                 return False
             return True
     def soldOut(self,item):
-        if item.tickets == item.transport.places:
-            return False
         return True
     def addItem(self,item):
         count=0;

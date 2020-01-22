@@ -1,2 +1,7 @@
-addressed.html
-<a href="{% url 'cart:orderproces' 2 %}">Dalej</a>
+<h2>Adress data</h2>
+<form actions='.' method="post">
+    {% csrf_token %}
+    {{form.errors}}
+    {{form}}
+    <input type="submit">
+</form>

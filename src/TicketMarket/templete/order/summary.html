@@ -1,2 +1,22 @@
-summary
-<a href="{% url 'cart:orderproces' 3 %}">Dalej</a>
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Cart</h2>
+{% for item in cartObj %}
+    <div>
+        <a href="{% url 'showitem' item.route.id %}">{{item.name}} </a>
+        {{item.quantity}} x {{item.price}} euro
+    </div>
+{% endfor %}
+<h2>Payment</h2>
+<div> Payment  : {{payment.name}}  - {{payment.price}}  </div>
+<div> Shipping : {{shipping.name}} - {{shipping.price}}  </div>
+<h2>Summary</h2>
+<div> Payment  : {{payment.name}}  - {{payment.price}}  </div>
+<div> Shipping : {{shipping.name}} - {{shipping.price}}  </div>
+<h2> Shipping Data </h2>
+<div> Street : {{address.street}}</div>
+<div> Bulding/Apartment : {{address.bulding}}/{{address.apartment}}</div>
+<div> Postcode - City :   {{address.postcode}}/{{address.city}}</div>
+<div> Phon     :          {{address.phon}}</div>
+<a href="{% url 'cart:orderproces' 3 %}">confirm</a>
+{% endblock %}

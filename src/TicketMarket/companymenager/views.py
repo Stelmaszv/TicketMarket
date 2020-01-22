@@ -64,8 +64,6 @@ class createline(baseCreate):
             id=item.id
             self.success_url = '/mycompany/setline/' + str(id) + '/'
             return redirect(self.success_url)
-        else:
-            print('error')
         return render(request, self.template_name, self.context)
 class setingsline(TemplateView):
     template_name = 'setline.html'
