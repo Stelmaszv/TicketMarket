@@ -28,10 +28,15 @@ class transport(models.Model):
     places = models.BigIntegerField(default=0)
     company = models.ForeignKey(company, on_delete=models.SET_NULL, null=True, blank=True)
     classs = models.ManyToManyField(classintrnasport, blank=True)
+class transportticket(models.Model):
+    name=models.CharField(max_length=100)
+    price = models.BigIntegerField(default=0)
+    stan = models.CharField(max_length=100)
+    buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 class route(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField()
-    tickets = models.BigIntegerField(default=0)
+    tickets = models.ManyToManyField(transportticket, blank=True)
     stations = models.ManyToManyField(routeStation, blank=True)
     company = models.ForeignKey(company, on_delete=models.SET_NULL, null=True, blank=True)
     transport = models.ForeignKey(transport, on_delete=models.SET_NULL, null=True, blank=True)
@@ -40,8 +45,8 @@ class route(models.Model):
     def setActive(self,id):
         error=0
         item=route.objects.get(id=id)
-        allStations=len(item.stations.all())
-        if allStations > 2:
+        allStations=item.stations.all()
+        if len(allStations) > 2:
             ifcorectTime = self.ifcorectTime(allStations)
             lastitem = item.stations.all().order_by('-number')
             if ifcorectTime:
@@ -66,21 +71,13 @@ class route(models.Model):
         if error < 1:
             return False
         return True
+
 class cart(models.Model):
     name = models.CharField(max_length=250)
     price = models.BigIntegerField(default=0)
     quantity = models.BigIntegerField(default=0)
     route = models.ForeignKey(route, on_delete=models.SET_NULL, null=True, blank=True)
     buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-class transportticket(models.Model):
-    name=models.CharField(max_length=100)
-    price = models.BigIntegerField(default=0)
-    stan = models.CharField(max_length=100)
-    route = models.ForeignKey(route, on_delete=models.SET_NULL, null=True, blank=True)
-    buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    company = models.ForeignKey(company, on_delete=models.SET_NULL, null=True, blank=True)
-    def setTicketInroud(self):
-        print('dqd')
 class shipping(models.Model):
     name = models.CharField(max_length=250)
     price = models.BigIntegerField(default=0)

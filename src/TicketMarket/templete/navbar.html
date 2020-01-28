@@ -5,6 +5,7 @@
         <a href="{% url 'myprofil' %}">Your profil</a>
         <a href="{% url 'mycompany:mycompany' %}">Your company</a>
         <a href="{% url 'cart:mycart' %}">Your cart</a>
+        <a href="{% url 'logout' %}">logout</a>
     {% else %}
         <a href="{% url 'home' %}">Home</a>
         <a href="{% url 'login' %}">login</a>

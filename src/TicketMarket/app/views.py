@@ -11,10 +11,9 @@ from core.baseview import (baseShowView)
 class MainView(TemplateView):
     def get(self,request,*args,**kwargs):
         query=self.setSearch(request);
-        transportticket.setTicketInroud(transportticket)
         context={'queryset':query,'request':request}
         return render(request,"home.html",context)
-    def faindStart(self,start,destenation):
+    def faindStart(self,start=False,destenation=False):
         query = route.objects.filter(stations__station__city=start).filter(stations__station__city=destenation)
         startnumber=0
         destenationnumber=0
@@ -44,7 +43,11 @@ class MainView(TemplateView):
                 return False
             return True
     def soldOut(self,item):
-        return True
+        tickets=len(item.tickets.all());
+        places=item.transport.places
+        if tickets < places:
+            return True
+        return  False
     def addItem(self,item):
         count=0;
         for el in self.routs:
@@ -100,6 +103,8 @@ class showTransport(baseShowView):
 class showStation(baseShowView):
     template = 'show/showstation.html'
     model = station
+class myprofil(TemplateView):
+    template_name = 'myprofil.html'
 class register(TemplateView):
     template_name = 'registeration/register.html'
     def post(self,request):
@@ -115,8 +120,7 @@ class register(TemplateView):
                 return redirect('home')
         data= {'form':register}
         return render(request,self.template_name,data)
-class myprofil(TemplateView):
-    template_name = 'myprofil.html'
+
 
 
 

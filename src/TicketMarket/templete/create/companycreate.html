@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form action='.' method='POST'>{% csrf_token %}
-        {{ form.name }}
-        {{ form.city }}
+    <form action='.' method='POST'>
+        {% csrf_token %}
+        <div> Name : {{ form.name }} </div>
+        <div> City : {{ form.city }} </div>
         <select name="user" required id="id_user" hidden>
           <option value="{{user.id}}" selected>{{user.username}}</option>
         </select>

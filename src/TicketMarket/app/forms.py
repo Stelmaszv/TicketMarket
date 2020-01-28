@@ -50,12 +50,11 @@ class LineUpdataForm(forms.ModelForm):
         fields=[
             'title',
             'description',
-            'tickets',
             'company',
             'transport',
             'driver'
         ]
-class LineForm(forms.ModelForm):
+class AddstationToline(forms.ModelForm):
     class Meta:
         model = routeStation
         fields = [
