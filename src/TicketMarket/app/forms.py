@@ -6,7 +6,8 @@ class DriverUpdataForm(forms.ModelForm):
         model=driver
         fields=[
             'name',
-            'surname'
+            'surname',
+            'company'
         ]
 class CompanyUpdataForm(forms.ModelForm):
     class Meta:

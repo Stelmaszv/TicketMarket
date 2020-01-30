@@ -1,37 +1,31 @@
-from django.shortcuts import render,get_object_or_404,redirect
-from .models import (route,driver,company,transport,station,transportticket)
+from .models import (route,driver,company,transport,station)
 from django.utils import timezone
 from .forms import (DriverUpdataForm,CompanyUpdataForm,StationUpdataForm,TransportUpdataForm)
 from django.views.generic.base import TemplateView
-from django.views.generic import (UpdateView)
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate,login
-from companymenager.views import mycompany
-from core.baseview import (baseShowView)
-class MainView(TemplateView):
-    def get(self,request,*args,**kwargs):
-        query=self.setSearch(request);
-        context={'queryset':query,'request':request}
-        return render(request,"home.html",context)
+from core.baseview import (baseListView,baseShowView,baseCreate,baseUpdateView)
+class MainView(baseListView):
+    template_name="home.html"
+    def setContext(self,request):
+        self.context = {'queryset': self.setSearch(request), 'request': request}
     def faindStart(self,start=False,destenation=False):
         query = route.objects.filter(stations__station__city=start).filter(stations__station__city=destenation)
         startnumber=0
         destenationnumber=0
         self.routs=[]
         for item in query:
-            soldOut=self.soldOut(item)
+            soldOut = self.soldOut(item)
             for stationInItem in item.stations.all():
-                Past=self.dataPast(stationInItem,start)
                 if stationInItem.station.city == start:
                     startnumber=stationInItem.number
+                    Past = self.dataPast(stationInItem, start)
                 if stationInItem.station.city == destenation:
                     destenationnumber=stationInItem.number
-                if startnumber is not None and destenationnumber is not None:
+                if startnumber < destenationnumber:
                     item.start=startnumber;
                     item.destenationnumber=destenationnumber
-                    if startnumber < destenationnumber:
-                        if Past and soldOut:
-                            self.addItem(item)
+                    if Past and soldOut:
+                        self.addItem(item)
         return self.routs
     def setNumber(self,item,place):
         if item.station.city == place:
@@ -60,67 +54,43 @@ class MainView(TemplateView):
             if len(request.GET['destenation']) and len(request.GET['start']):
                 return self.faindStart(request.GET['start'],request.GET['destenation'])
         return route.objects.all()
-class BaseUpdateView(UpdateView):
-    template_name = 'edit/editbase.html'
-    def get_object(self):
-        id_ = self.kwargs.get("id")
-        return get_object_or_404(self.model, id=id_)
-    def get(self,request,*args, **kwargs):
-        context = {}
-        obj = self.get_object()
-        if obj is not None:
-            form = DriverUpdataForm(instance=obj)
-            context['form'] = form
-            context['items'] = mycompany().setData(request)
-        return render(request, self.template_name, context)
-class editTransport(BaseUpdateView):
-    template_name = 'create/createTransport.html'
-    form_class = TransportUpdataForm
-    model=transport
-class editDriver(BaseUpdateView):
-    template_name = 'create/createdriver.html'
-    form_class = DriverUpdataForm
-    model=driver
-class editCompany(BaseUpdateView):
-    template_name = 'create/companycreate.html'
-    form_class = CompanyUpdataForm
-    model=company
-class editStation(BaseUpdateView):
-    form_class = StationUpdataForm
-    model=station
-class show(baseShowView):
-    template = 'show/show.html'
-    model=route
-class showDriver(baseShowView):
-    template = 'show/showdriver.html'
-    model = driver
-class showCompany(baseShowView):
-    template = 'show/showcompany.html'
-    model = company
-class showTransport(baseShowView):
-    template = 'show/showtransport.html'
-    model = transport
-class showStation(baseShowView):
-    template = 'show/showstation.html'
-    model = station
+class register(baseCreate):
+    success_url = '/accounts/login/'
+    template_name = 'registeration/register.html'
+    form = UserCreationForm
 class myprofil(TemplateView):
     template_name = 'myprofil.html'
-class register(TemplateView):
-    template_name = 'registeration/register.html'
-    def post(self,request):
-        register = UserCreationForm()
-        if request.method=='POST':
-            register= UserCreationForm(request.POST)
-            if register.is_valid():
-                register.save()
-                username=register.cleaned_data['username']
-                passsword=register.cleaned_data['password1']
-                user=authenticate(username=username,passsword=passsword)
-                login(request,user)
-                return redirect('home')
-        data= {'form':register}
-        return render(request,self.template_name,data)
-
+class editTransport(baseUpdateView):
+    template_name = 'create/createTransport.html'
+    form_class = TransportUpdataForm
+    getObject=transport
+class editCompany(baseUpdateView):
+    template_name = 'create/companycreate.html'
+    form_class = CompanyUpdataForm
+    getObject=company
+class editDriver(baseUpdateView):
+    template_name = 'create/createdriver.html'
+    form_class = DriverUpdataForm
+    getObject=driver
+class editStation(baseUpdateView):
+    template_name = 'edit/editbase.html'
+    form_class = StationUpdataForm
+    getObject  = station
+class show(baseShowView):
+    template = 'show/show.html'
+    getObject =route
+class showDriver(baseShowView):
+    template = 'show/showdriver.html'
+    getObject = driver
+class showCompany(baseShowView):
+    template = 'show/showcompany.html'
+    getObject = company
+class showTransport(baseShowView):
+    template = 'show/showtransport.html'
+    getObject = transport
+class showStation(baseShowView):
+    template = 'show/showstation.html'
+    getObject = station
 
 
 

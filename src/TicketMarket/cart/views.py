@@ -1,9 +1,8 @@
-from django.shortcuts import render, redirect,HttpResponse,reverse,get_object_or_404
+from django.shortcuts import render, redirect,get_object_or_404,reverse,HttpResponse
 from django.views.generic.base import TemplateView
 from app.models import (route,cart,payment,shipping,useraddress,transportticket)
 from app.forms import (useraddresstUpdataForm)
-import datetime
-from django.utils import timezone
+from core.baseview import (baseListView,baseUpdateView)
 
 class ticket:
     def __init__(self,line,start,end):
@@ -33,96 +32,71 @@ class ticket:
             indexinclass=indexinclass+1
             item.indexinclass=indexinclass
         return classList
-class addtocart(TemplateView):
+class addtocart(baseListView):
     template_name = 'cart/addtocart.html'
-    def get(self,request, id=None,start=None,end=None,index=None, *args, **kwargs):
-        line=route.objects.get(pk=id)
-        price=ticket(line,start,end)
-        prices=price.setPrice();
-        if index:
-            if index>-1:
-                item=prices[index]
-                newcart=cart(name=item.name, price=item.classPrice, quantity=1,route=line,buyer=request.user)
-                newcart.save()
-                return redirect('/cart/myCart/')
-        context={
-            'classs':prices,
+    success_url = '/cart/myCart/'
+    def setContext(self,request):
+        price= self.setPrice(request)
+        self.context={
+            'prices':price,
             'parms':{
-                'id'   : id,
-                'start':start,
-                'end':end,
-                'index':index
+                'id'   : self.kwargs.get("id"),
+                'start': self.kwargs.get("start"),
+                'end'  : self.kwargs.get("end"),
+                'index': self.kwargs.get("index")
             }
         }
-
-        return render(request, self.template_name,context)
-class addToCartAction(TemplateView):
-    template_name = 'cart/addtocart.html'
-    def get(self, request, id=None, start=None, end=None, *args, **kwargs):
-        prices=request.COOKIES.get('prices')
-        return render(request, self.template_name,{})
-class mycart(TemplateView):
-    template_name = 'cart/mycart.html'
-    def get(self, request, id=None, start=None, end=None, *args, **kwargs):
-        list=cart.objects.filter(buyer__username=request.user.username)
-        context = {
-            'list':list
-        }
-        return render(request, self.template_name, context)
-class order(TemplateView):
-    form = useraddresstUpdataForm()
-    def get_object(self,request):
-        return get_object_or_404(useraddress, user=request.user.id)
-    def get(self, request, step=None, *args, **kwargs):
-        items=[shoping,addressed,summary,confirmation]
-        return items[step].get(self,request)
-    def post(self,request,step=None, *args, **kwargs):
-        items = [shoping, addressed, summary, confirmation]
-        return items[step].post(self, request)
-class shoping(TemplateView):
-    def get(self,request):
+    def setPrice(self,request,index=None):
+        id=self.kwargs.get("id")
+        line = route.objects.get(pk=id)
+        price = ticket(line, self.kwargs.get("start"), self.kwargs.get("end"))
+        prices = price.setPrice();
         if request.GET:
-            return redirect('/cart/orderproces/1?shipping='+request.GET['shipping']+'&&payment='+request.GET['payment'])
-        context = {
-            'shipping':shipping.objects.all(),
-            'payment':payment.objects.all()
+            item = prices[int(request.GET['index'])]
+            newcart = cart(name=item.name, price=item.classPrice, quantity=1, route=line, buyer=request.user)
+            newcart.save()
+            self.redirect=1
+        return prices
+class mycart(baseListView):
+    template_name = 'cart/mycart.html'
+    def setContext(self,request):
+        self.context={
+            'list':cart.objects.filter(buyer__username=request.user.username)
         }
-        return render(request, 'order/shipping.html', context)
-class addressed(TemplateView):
-    form = useraddresstUpdataForm()
-    def get(self,request):
-        context = {
-            'form':self.form
+class shoping(baseListView):
+    template_name = 'order/shipping.html'
+    def setContext(self,request):
+        self.context = {
+            'shipping': shipping.objects.all(),
+            'payment': payment.objects.all()
         }
-        return render(request, 'order/addressed.html', context)
-    def post(self,request):
-        self.obj = self.get_object(request)
-        self.form = useraddresstUpdataForm(request.POST, instance=self.obj)
-        context = {
-            'form': self.form
+        if request.GET:
+            self.success_url = '/cart/addressed/?payment'+str(request.GET['payment'])+'&&shipping='+str(request.GET['shipping'])
+            self.redirect = 1
+class addressed(baseUpdateView):
+    template_name = 'order/addressed.html'
+    form_class = useraddresstUpdataForm
+    getObject = useraddress
+    success_url = '/cart/summary/?payment=1&&shipping=1'
+    def get_object(self):
+        return get_object_or_404(useraddress, id=7)
+class summary(baseListView):
+    template_name = 'order/summary.html'
+    def setContext(self,request):
+        self.context = {
+            'payment': payment.objects.get(id=int(request.GET['payment'])),
+            'shipping': shipping.objects.get(id=int(request.GET['shipping'])),
+            'address': cart.objects.filter(buyer__username=request.user.username),
+            'cartObj': cart.objects.filter(buyer__username=request.user.username)
         }
-        if self.form.is_valid():
-            self.form .save()
-            return redirect('/cart/orderproces/2?shipping=' + request.GET['shipping'] + '&&payment=' + request.GET['payment'])
-        return render(request, 'order/addressed.html', context)
-class summary:
-    def get(self,request):
-        paymentObj = payment.objects.get(id=request.GET['payment'])
-        shippingObj = shipping.objects.get(id=request.GET['shipping'])
-        cartObj = cart.objects.filter(buyer__username=request.user.username)
-        address= self.get_object(request)
-        context = {
-            'payment' :paymentObj,
-            'shipping':shippingObj,
-            'address' :address,
-            'cartObj' :cartObj
-        }
-        return render(request, 'order/summary.html', context)
-class confirmation:
-    def get(self,request):
+class confirmation(baseListView):
+    template_name = 'order/confirmation.html'
+    def setContext(self, request):
+        self.orderExecute(request)
+    def orderExecute(self,request):
         cartObj = cart.objects.filter(buyer__username=request.user.username)
         for cartelment in cartObj:
-            el=transportticket(name=cartelment.name, price=cartelment.price, stan='aceppt',route=cartelment.route,buyer=request.user,company=cartelment.route.company)
+            el=transportticket(name=cartelment.name, price=cartelment.price, stan='aceppt',route=cartelment.route,buyer=request.user)
             el.save()
             cartelment.delete()
         context = {}

@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Add to Cart</h2>
-    {% for item in classs %}
-        <a href="{% url 'cart:addtocartindex' parms.id parms.start parms.end item.indexinclass %}">{{item.name}} - {{item.classPrice}}</a>
+    <h2>Add to Cart</h2>
+    {% for item in prices %}
+        <a href="{% url 'cart:addtocartindex' parms.id parms.start parms.end %}?index={{item.indexinclass}}">{{item.name}} - {{item.classPrice}}</a>
         <br>
     {% endfor %}
- </form>
 {% endblock %}
