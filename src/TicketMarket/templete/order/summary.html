@@ -15,8 +15,8 @@
 <div> Shipping : {{shipping.name}} - {{shipping.price}}  </div>
 <h2> Shipping Data </h2>
 <div> Street : {{address.street}}</div>
-<div> Bulding/Apartment : {{address.bulding}}/{{address.apartment}}</div>
-<div> Postcode - City :   {{address.postcode}}/{{address.city}}</div>
+<div> Bulding/Apartment : {{address.bulding}} / {{address.apartment}}</div>
+<div> Postcode - City :   {{address.postcode}} - {{address.city}}</div>
 <div> Phon     :          {{address.phon}}</div>
 <a href="{% url 'cart:confirmation' %}">confirm</a>
 {% endblock %}

@@ -4,6 +4,7 @@ from .forms import (DriverUpdataForm,CompanyUpdataForm,StationUpdataForm,Transpo
 from django.views.generic.base import TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from core.baseview import (baseListView,baseShowView,baseCreate,baseUpdateView)
+from core.decorators import login_required,emptyCart,driverowner,copanyowner
 class MainView(baseListView):
     template_name="home.html"
     def setContext(self,request):
@@ -14,18 +15,19 @@ class MainView(baseListView):
         destenationnumber=0
         self.routs=[]
         for item in query:
-            soldOut = self.soldOut(item)
-            for stationInItem in item.stations.all():
-                if stationInItem.station.city == start:
-                    startnumber=stationInItem.number
-                    Past = self.dataPast(stationInItem, start)
-                if stationInItem.station.city == destenation:
-                    destenationnumber=stationInItem.number
-                if startnumber < destenationnumber:
-                    item.start=startnumber;
-                    item.destenationnumber=destenationnumber
-                    if Past and soldOut:
-                        self.addItem(item)
+            if item.active:
+                soldOut = self.soldOut(item)
+                for stationInItem in item.stations.all():
+                    if stationInItem.station.city == start:
+                        startnumber=stationInItem.number
+                        Past = self.dataPast(stationInItem, start)
+                    if stationInItem.station.city == destenation:
+                        destenationnumber=stationInItem.number
+                    if startnumber < destenationnumber:
+                        item.start=startnumber;
+                        item.destenationnumber=destenationnumber
+                        if Past and soldOut:
+                            self.addItem(item)
         return self.routs
     def setNumber(self,item,place):
         if item.station.city == place:
@@ -37,8 +39,10 @@ class MainView(baseListView):
                 return False
             return True
     def soldOut(self,item):
-        tickets=len(item.tickets.all());
+        query=item.tickets.filter(invalid=False)
+        tickets=len( query);
         places=item.transport.places
+        print(str(tickets) + ' / ' +str(places))
         if tickets < places:
             return True
         return  False
@@ -53,6 +57,7 @@ class MainView(baseListView):
         if request.GET:
             if len(request.GET['destenation']) and len(request.GET['start']):
                 return self.faindStart(request.GET['start'],request.GET['destenation'])
+        route().setLine()
         return route.objects.all()
 class register(baseCreate):
     success_url = '/accounts/login/'
@@ -62,23 +67,41 @@ class myprofil(TemplateView):
     template_name = 'myprofil.html'
 class editTransport(baseUpdateView):
     template_name = 'create/createTransport.html'
-    form_class = TransportUpdataForm
+    form = TransportUpdataForm
     getObject=transport
+    @login_required
+    def get(self,request,*args, **kwargs):
+        return self.addGet(request)
 class editCompany(baseUpdateView):
     template_name = 'create/companycreate.html'
-    form_class = CompanyUpdataForm
+    form = CompanyUpdataForm
     getObject=company
+    @login_required
+    @copanyowner
+    def get(self,request,*args, **kwargs):
+        return self.addGet(request)
 class editDriver(baseUpdateView):
     template_name = 'create/createdriver.html'
-    form_class = DriverUpdataForm
+    form = DriverUpdataForm
     getObject=driver
+    @login_required
+    @driverowner
+    def get(self,request,*args, **kwargs):
+        return self.addGet(request)
 class editStation(baseUpdateView):
     template_name = 'edit/editbase.html'
-    form_class = StationUpdataForm
+    form = StationUpdataForm
     getObject  = station
+    @login_required
+    def get(self,request,*args, **kwargs):
+        return self.addGet(request)
 class show(baseShowView):
     template = 'show/show.html'
     getObject =route
+    def setContext(self):
+        self.obj=self.get_object()
+        ticketAll = self.obj.tickets.filter(invalid=False)
+        self.context = {'context': self.obj,'ticketAll': ticketAll}
 class showDriver(baseShowView):
     template = 'show/showdriver.html'
     getObject = driver

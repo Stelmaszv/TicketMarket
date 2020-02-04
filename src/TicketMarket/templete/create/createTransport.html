@@ -4,16 +4,16 @@
         <div>Name : {{ form.name }}</div>
         <div>Description: <br>{{ form.description }}</div>
         <div>Places:{{ form.places }}</div>
-        <div>Company: {{ form.company }}
-            <!--
-            <select name="company" id="id_company">
-                    <option value="" selected>---------</option>
-                {% for item in items.campanys %}
-                    <option value="{{item.id}}">{{item.name}}</option>
-                {% endfor %}
+        </div> Company: <select name="company" id="id_company">
+              <option value="">---------</option>
+              {% for item in items.campanys %}
+                <option value="{{item.id}}">{{item.name}}</option>
+              {% endfor %}
             </select>
-            -->
         </div>
+        <select name="user" required id="id_user" hidden>
+          <option value="{{user.id}}" selected>{{user.username}}</option>
+        </select>
         <input type='submit' value='Save' />
     </form>
 {% endblock %}

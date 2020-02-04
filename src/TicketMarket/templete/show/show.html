@@ -6,19 +6,16 @@
     <div>driver - <a href="{% url 'driver' context.driver.id %}">{{context.driver.name}}</a></div>
     <div>company - <a href="{% url 'company' context.company.id %}">{{context.company.name}}</a> </div>
     <div>transport - <a href="{% url 'transport' context.transport.id %}">{{context.transport.name}}</a> </div>
-    {% if context.tickets < context.transport.places %}
-        <div>Places {{context.tickets}}/{{context.transport.places}}</div>
+    {% if ticketAll|length < context.transport.places %}
+        <div>Places {{ ticketAll|length }}/{{context.transport.places}}</div>
     {% endif %}
-    {% if context.tickets == context.transport.places %}
+    {% if ticketAll == context.transport.places %}
         <div>it's sold out</div>
     {% endif %}
     {% for station in context.stations.all %}
         <li>
             {{station.number}} <a href="{% url 'station' station.station.id %}">{{station.station.name}}</a>
             - {{station.station.city}} - {{station.time}}
-            {% if station.last == False %}
-            - {{station.price}} euro
-            {% endif %}
         </li>
     {% endfor %}
 {% endblock %}

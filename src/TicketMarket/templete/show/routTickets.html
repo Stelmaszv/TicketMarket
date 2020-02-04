@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for item in items %}
+        <div>
+            <a href="{% url 'mycompany:ticket' item.id  %}">
+                {{item.name}}
+                {{item.buyer}}
+                {{item.price}}
+                {{item.stan.name}}
+            </a>
+        </div>
+    {% endfor %}
+    {% if items|length == 0 %}
+        <div>
+            no ticket on this rout
+        </div>
+    {% endif %}
+{% endblock %}

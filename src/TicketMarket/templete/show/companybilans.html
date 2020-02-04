@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for item in items %}
+        <div>
+            <a href="{% url 'mycompany:routtickets' item.id  %}">{{item.title}}</a>
+        </div>
+    {% endfor %}
+    {% if items|length == 0 %}
+        <div>
+            no routs faind
+        </div>
+    {% endif %}
+{% endblock %}

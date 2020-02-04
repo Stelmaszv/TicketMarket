@@ -31,6 +31,7 @@ class TransportUpdataForm(forms.ModelForm):
             'name',
             'description',
             'places',
+            'user',
             'company'
         ]
 class useraddresstUpdataForm(forms.ModelForm):

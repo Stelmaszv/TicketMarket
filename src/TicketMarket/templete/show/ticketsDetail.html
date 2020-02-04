@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        <div>Nmae   {{context.name}}</div>
+        <div>Buyer  {{context.buyer}}</div>
+        <div>Price  {{context.price}}</div>
+        <div>Stan   {{context.stan.name}}</div>
+        <a href="{% url 'mycompany:updatestan' context.id  %}">update stan</a>
+    </div>
+{% endblock %}
